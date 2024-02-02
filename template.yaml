@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS CloudFormation template to create Lambda functions and EventBridge resources
+
+  Sample SAM Template for untitled
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  TesteventLambda1:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: lambdafun1/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Architectures:
+        - x86_64
+
+
+  TesteventLambda2:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: lambdafun2/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Architectures:
+        - x86_64
+      Events:
+        MyEventBridgeTrigger:
+          Type: CloudWatchEvent
+          Properties:
+            Pattern:
+              source:
+                - mytestapp
+              detail-type:
+                - 'AWS API Call via CloudTrail'
+              detail:
+                type:
+                  - "1"
+            EventBusName: MyEventBus
+
+  TesteventLambda3:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: lambdafun3/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Architectures:
+        - x86_64
+      Events:
+        MyEventBridgeTrigger:
+          Type: CloudWatchEvent
+          Properties:
+            Pattern:
+              source:
+                - mytestapp
+              detail-type:
+                - 'AWS API Call via CloudTrail'
+              detail:
+                type:
+                  - "2"
+            EventBusName: MyEventBus
+
+  EventBridgeEventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: MyEventBus
+
+
